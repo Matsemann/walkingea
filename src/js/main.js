@@ -1,39 +1,9 @@
 import css from '../css/styles.css';
 
 import {World, Vec2, Edge, Box, DistanceJoint} from 'planck-js';
-
+import Creature from './creature.js';
 
 const world = new World(Vec2(0, -10));
-
-
-const ground = world.createBody();
-ground.createFixture(Edge(Vec2(-40.0, 0.0), Vec2(40.0, 0.0)), 0.0);
-
-const boxShape = Box(1, 1);
-
-const bodyDef = {
-    type: 'dynamic',
-    position: Vec2(0, 10)
-};
-
-const box = world.createBody(bodyDef);
-box.createFixture(boxShape, 5);
-
-
-const jointDef = {
-    frequencyHz: 2.0,
-    dampingRatio: 0.2
-    //collideConnected: true
-};
-
-
-const distanceJoint = DistanceJoint(jointDef,
-    ground, Vec2(-10, 7),
-    box, box.getWorldPoint(Vec2(.5, .5))
-);
-
-world.createJoint(distanceJoint);
-distanceJoint.setLength(10);
 
 
 var canvas = document.getElementById('mainCanvas');
@@ -41,14 +11,42 @@ const ctx = canvas.getContext('2d');
 
 
 var camera = {
-    pos: Vec2(0, 0),
-    zoom: 10,
+    pos: Vec2(5, 5.5),
+    zoom: 50,
 };
 
+const grounds = [];
+const creatures = [];
+
+for (let i = 0; i < 4; i++) {
+    let offset = (i % 4) * 3;
+    creatures.push(new Creature('circle', world, getRandomColor(), offset));
+}
+
+for (let i = 0; i < 4; i++) {
+    const g = world.createBody();
+    g.createFixture(Edge(Vec2(-40.0, i * 3), Vec2(40.0, i * 3)), {density: 0, friction: 1.5});
+    grounds.push(g);
+}
+
+
+var timePassed = 0;
 
 setInterval(() => {
+
+    creatures.forEach(c => c.update(timePassed));
+
+    var max = 0;
+    creatures.forEach(c => {
+        const x = c.maxDst;
+        if (x > max) {
+            max = x;
+        }
+    });
+
     world.step(1 / 60);
-    var p = box.getPosition();
+    timePassed += 1 / 60;
+    //var p = box.getPosition();
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.save();
@@ -57,32 +55,60 @@ setInterval(() => {
     ctx.translate(canvas.width / 2 - (camera.pos.x * camera.zoom), canvas.height / 2 + (camera.pos.y * camera.zoom));
     ctx.scale(camera.zoom, -camera.zoom);
 
+    ctx.beginPath();
+    ctx.lineWidth = .005;
+    ctx.moveTo(0, -5);
+    ctx.lineTo(0, 17);
+    ctx.stroke();
 
-    drawRect(0, 0, 1, 1);
-    drawRect(-10, 10, .5, .5);
-    drawRect(0, 30, 1, 1);
-    drawRect(0, -30, 1, 1);
-    drawRect(40, 0, 1, 1);
-    drawRect(-40, 0, 1, 1);
 
-    drawRect(p.x, p.y, 1, 1, box.getAngle());
+    ctx.beginPath();
+    ctx.lineWidth = .01;
+    ctx.moveTo(max, -5);
+    ctx.lineTo(max, 17);
+    ctx.stroke();
 
+    grounds.forEach((g, i) => {
+        ctx.beginPath();
+        ctx.lineWidth=.01;
+
+        ctx.moveTo(-40, i * 3);
+        ctx.lineTo(40, i * 3);
+        ctx.stroke();
+    });
+
+    creatures.forEach(c => c.render(ctx));
     ctx.restore();
 
-}, 1000 / 30);
+}, 1000 / 60);
+
 
 function drawRect(x, y, w, h, a) {
+    //ctx.fillRect(x - w / 2, y - h / 2, w, h);
+
     ctx.save();
 
     ctx.translate(x + w/2, y + h / 2);
     ctx.rotate(a);
 
-    //ctx.fillRect(x - w / 2, y - h / 2, w, h);
+    ctx.fillRect(0, - h, w, h);
     ctx.fillRect(- w / 2, - h / 2, w, h);
 
     ctx.restore();
 }
 
-document.getElementById('zoom').addEventListener('input', () => {
-    camera.zoom = document.getElementById('zoom').value;
+document.getElementById('camerax').addEventListener('input', () => {
+    camera.pos.x = document.getElementById('camerax').value;
 });
+/*
+document.getElementById('length').addEventListener('input', () => {
+    cr.update(document.getElementById('length').value);
+});*/
+
+function getRandomColor() {
+    return {
+        r: Math.floor(Math.random() * 255),
+        g: Math.floor(Math.random() * 255),
+        b: Math.floor(Math.random() * 255),
+    }
+}
