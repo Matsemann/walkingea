@@ -18,9 +18,9 @@ var camera = {
 const grounds = [];
 const creatures = [];
 
-for (let i = 0; i < 4; i++) {
+for (let i = 0; i < 20; i++) {
     let offset = (i % 4) * 3;
-    creatures.push(new Creature('circle', world, getRandomColor(), offset));
+    creatures.push(new Creature('something', world, getRandomColor(), offset));
 }
 
 for (let i = 0; i < 4; i++) {

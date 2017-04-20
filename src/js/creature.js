@@ -58,8 +58,8 @@ export default class Creature {
             world.createJoint(joint);
             this.joints.push(joint);
             this.jointLengths.push(joint.getLength());
-            //this.movements.push(Math.random());
-            this.movements.push(.3 + offset / 10);
+            this.movements.push(Math.random());
+            //this.movements.push(.2);
         }
 
         //this.movements[0] = 10;
@@ -73,7 +73,7 @@ export default class Creature {
             const l = this.jointLengths[i];
             const m = this.movements[i];
 
-            var newL = (Math.sin(time * 10 * m + Math.PI / 2) + 1) / 4 + 0.5;
+            var newL = (Math.sin(time * 10 * m + Math.PI / 2 + i*.7) + 1) / 4 + 0.5;
 
             j.setLength(l * newL);
         }
