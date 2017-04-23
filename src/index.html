@@ -6,14 +6,41 @@
 </head>
 <body>
 
-<h1>Hei2</h1>
+<h1>Walking EA</h1>
+<p>Press start evolution over at the right. Scroll down for a description.</p>
 
+<div class="container">
 
-<input id="camerax" type="range" min="-50" max="50" step="1" value="5" />
-<div>
+    <div class="canvas">
+        <canvas id="mainCanvas" width="800" height="600"></canvas>
 
-    <canvas id="mainCanvas" width="800" height="600"></canvas>
+        <div class="slider">
+            <label for="speedslider">Speed</label>
+            <input id="speedslider" type="range" min="1" max="50" step="1" value="1" />
+            <input id="speedslidervalue" type="text" value="1" readonly />
+        </div>
+        <div class="slider">
+            <label for="cameraslider">CameraX</label>
+            <input id="cameraslider" type="range" min="-50" max="100" step="1" value="5" />
+            <input id="cameraslidervalue" type="text" value="5" readonly />
+        </div>
+    </div>
+
+    <div class="controls">
+        asd
+    </div>
 </div>
+
+<div class="desc">
+    <h2>Information</h2>
+
+
+    <p>Inspired by <a href="https://youtu.be/3zqaBS5_6LM">this video</a> by Junior Rojas,
+        <a href="http://boxcar2d.com/">Boxcard2d</a> and its browser predecessor
+        <a href="http://rednuht.org/genetic_cars_2/">Genetic Cars 2</a>.
+    </p>
+</div>
+
 
 <script src="/bundle.js"></script>
 </body>
