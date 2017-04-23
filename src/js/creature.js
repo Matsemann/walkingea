@@ -6,14 +6,14 @@ import defs from './creatureDefinitions.js';
 
 export default class Creature {
 
-    constructor(d, world, color, offset) {
+    constructor(d, phenotype, world, color, offset) {
         const definition = defs[d];
 
         this.color = color;
         this.bodies = [];
         this.joints = [];
         this.jointLengths = [];
-        this.movements = [];
+        this.movements = phenotype;
 
         this.maxDst = 0;
 
@@ -58,7 +58,7 @@ export default class Creature {
             world.createJoint(joint);
             this.joints.push(joint);
             this.jointLengths.push(joint.getLength());
-            this.movements.push(Math.random());
+            //this.movements.push(Math.random());
             //this.movements.push(.2);
         }
 

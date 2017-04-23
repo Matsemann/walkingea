@@ -1,114 +1,123 @@
-import css from '../css/styles.css';
+import { simulate } from './simulation.js';
 
-import {World, Vec2, Edge, Box, DistanceJoint} from 'planck-js';
-import Creature from './creature.js';
+/* Input parameters */
+const populationSize = 20;
+const numberOfGenes = 9; // 16 for circle, 9 for something
+const mutationRate = 0.05;
+const crossoverRate = 0.7;
 
-const world = new World(Vec2(0, -10));
+let currentGeneration = 1;
 
-
-var canvas = document.getElementById('mainCanvas');
-const ctx = canvas.getContext('2d');
-
-
-var camera = {
-    pos: Vec2(5, 5.5),
-    zoom: 50,
+/* Generate population */
+const generatePopulation = () => {
+    const population = [];
+    for (let i = 0; i < populationSize; i++) {
+        const genes = [];
+        for(let j = 0; j < numberOfGenes; j++) {
+            genes.push(Math.random());
+        }
+        population.push(genes);
+    }
+    return population;
 };
 
-const grounds = [];
-const creatures = [];
 
-for (let i = 0; i < 20; i++) {
-    let offset = (i % 4) * 3;
-    creatures.push(new Creature('something', world, getRandomColor(), offset));
-}
-
-for (let i = 0; i < 4; i++) {
-    const g = world.createBody();
-    g.createFixture(Edge(Vec2(-40.0, i * 3), Vec2(40.0, i * 3)), {density: 0, friction: 1.5});
-    grounds.push(g);
-}
+/* Fitness evaluation */
+const evaluateFitness = (population, maxDst) => {
+    return maxDst;
+};
 
 
-var timePassed = 0;
-
-setInterval(() => {
-
-    creatures.forEach(c => c.update(timePassed));
-
-    var max = 0;
-    creatures.forEach(c => {
-        const x = c.maxDst;
-        if (x > max) {
-            max = x;
+/* Mutation */
+const mutate = (population) => {
+    for (let i = 0; i < population.length; i++) {
+        if (Math.random() <= mutationRate) {
+            const geneToMutate = Math.floor(Math.random() * population[i].length);
+            population[i][geneToMutate] = Math.random();
         }
-    });
-
-    world.step(1 / 60);
-    timePassed += 1 / 60;
-    //var p = box.getPosition();
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.save();
-
-    //ctx.translate(400, canvas.height);
-    ctx.translate(canvas.width / 2 - (camera.pos.x * camera.zoom), canvas.height / 2 + (camera.pos.y * camera.zoom));
-    ctx.scale(camera.zoom, -camera.zoom);
-
-    ctx.beginPath();
-    ctx.lineWidth = .005;
-    ctx.moveTo(0, -5);
-    ctx.lineTo(0, 17);
-    ctx.stroke();
-
-
-    ctx.beginPath();
-    ctx.lineWidth = .01;
-    ctx.moveTo(max, -5);
-    ctx.lineTo(max, 17);
-    ctx.stroke();
-
-    grounds.forEach((g, i) => {
-        ctx.beginPath();
-        ctx.lineWidth=.01;
-
-        ctx.moveTo(-40, i * 3);
-        ctx.lineTo(40, i * 3);
-        ctx.stroke();
-    });
-
-    creatures.forEach(c => c.render(ctx));
-    ctx.restore();
-
-}, 1000 / 60);
-
-
-function drawRect(x, y, w, h, a) {
-    //ctx.fillRect(x - w / 2, y - h / 2, w, h);
-
-    ctx.save();
-
-    ctx.translate(x + w/2, y + h / 2);
-    ctx.rotate(a);
-
-    ctx.fillRect(0, - h, w, h);
-    ctx.fillRect(- w / 2, - h / 2, w, h);
-
-    ctx.restore();
-}
-
-document.getElementById('camerax').addEventListener('input', () => {
-    camera.pos.x = document.getElementById('camerax').value;
-});
-/*
-document.getElementById('length').addEventListener('input', () => {
-    cr.update(document.getElementById('length').value);
-});*/
-
-function getRandomColor() {
-    return {
-        r: Math.floor(Math.random() * 255),
-        g: Math.floor(Math.random() * 255),
-        b: Math.floor(Math.random() * 255),
     }
+
+    return population;
+};
+
+
+/* Crossover */
+const crossover = (parents) => {
+    const children = [];
+
+    for(let i = 0; i < populationSize/2; i++) {
+        const parent1 = parents[Math.floor(Math.random() * parents.length)];
+        const parent2 = parents[Math.floor(Math.random() * parents.length)];
+
+        if (Math.random() < crossoverRate) {
+            const crossoverPoint = Math.floor(Math.random() * parent1.length);
+            const child1Genes = parent1.map(function(gene, index) {
+                if (index <= crossoverPoint) {
+                    return gene;
+                }
+                return parent2[index];
+            });
+            const child2Genes = parent2.map(function(gene, index) {
+                if (index <= crossoverPoint) {
+                    return gene;
+                }
+                return parent1[index];
+            });
+
+            children.push(child1Genes);
+            children.push(child2Genes);
+        } else {
+            children.push(parent1);
+            children.push(parent2);
+        }
+    }
+
+    return children;
+};
+
+
+/* Parent selection */
+const selectParentIndex = (rouletteWheel) => {
+    const fitnessPick = Math.random();
+    for (let i = 0; i < rouletteWheel.length; i++) {
+        if (rouletteWheel[i] > fitnessPick) {
+            return i;
+        }
+    }
+};
+const selectParentPool = (population, fitness) => {
+    const totalFitness = fitness.reduce(function(a,b) {return a + b}, 0);
+    const rouletteWheel = [fitness[0]/totalFitness];
+    for (let i = 1; i < fitness.length; i++) {
+        rouletteWheel[i] = fitness[i]/totalFitness + rouletteWheel[i-1];
+    }
+
+    const numberOfParents = 10;
+    const parents = [];
+    for (let i = 0; i < numberOfParents; i++) {
+        const index = selectParentIndex(rouletteWheel);
+        parents.push(population[index]);
+    }
+
+    return parents;
+};
+
+
+/* Adult selection */
+const adultSelection = (population) =>  {
+    return population;
+};
+
+const evolutionaryLoop = (population, maxDst) => {
+    const fitness = evaluateFitness(population, maxDst);
+    const parents = selectParentPool(population, fitness);
+    const children = crossover(parents);
+    mutate(children);
+    const newPopulation = adultSelection(children);
+    simulate(children, ++currentGeneration, evolutionaryLoop)
 }
+
+(function start() {
+    const population = generatePopulation();
+    simulate(population, currentGeneration, evolutionaryLoop);
+})();
