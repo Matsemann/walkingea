@@ -16,8 +16,11 @@ body {
     float: right;
 }
 
-.slider {
+.inline {
     float: left;
+}
+
+.slider {
     padding: 10px 10px 10px 0;
 }
 
@@ -32,7 +35,7 @@ body {
     top: 5px;
 }
 .slider input[type="text"] {
-    width: 25px;
+    width: 30px;
 }
 
 .desc {

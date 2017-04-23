@@ -19,6 +19,7 @@ const canvas = document.getElementById('mainCanvas');
 const ctx = canvas.getContext('2d');
 
 export function simulate(creatureType, phenotypes, cb) {
+    finished = false;
     simulation = new Simulation(creatureType, phenotypes);
     callback = cb;
 
@@ -42,7 +43,12 @@ function startSimulation() {
     }
 
     if (!finished) {
-        simulationTimeout = setTimeout(startSimulation, 1000 * simFreq);
+        var timeout = 1000 * simFreq;
+        if (simulationIterations > 15) {
+            timeout = 1; // to not have 1/60 timeout when trying to speed up very fast
+        }
+
+        simulationTimeout = setTimeout(startSimulation, timeout);
     }
 }
 
@@ -52,12 +58,14 @@ function startRendering() {
     }, 1000 * simFreq);
 }
 
-function endSimulation() {
+export function endSimulation() {
     finished = true;
     clearTimeout(simulationTimeout);
     clearInterval(renderInterval);
 
-    callback("yoyo");
+    if (callback) {
+        callback("yoyo");
+    }
 }
 
 function simulationFinished() {

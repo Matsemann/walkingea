@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Webpack 2 Demo</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
 
@@ -14,26 +14,62 @@
     <div class="canvas">
         <canvas id="mainCanvas" width="800" height="600"></canvas>
 
-        <div class="slider">
+        <div class="slider inline">
             <label for="speedslider">Speed</label>
-            <input id="speedslider" type="range" min="1" max="50" step="1" value="1" />
-            <input id="speedslidervalue" type="text" value="1" readonly />
+            <input id="speedslider" type="range" min="1" max="50" step="1" value="1"/>
+            <input id="speedslidervalue" type="text" value="1" readonly/>
         </div>
-        <div class="slider">
+        <div class="slider inline">
             <label for="cameraslider">CameraX</label>
-            <input id="cameraslider" type="range" min="-50" max="100" step="1" value="5" />
-            <input id="cameraslidervalue" type="text" value="5" readonly />
+            <input id="cameraslider" type="range" min="-50" max="100" step="1" value="5"/>
+            <input id="cameraslidervalue" type="text" value="5" readonly/>
         </div>
     </div>
 
     <div class="controls">
-        asd
+        <h2>Controls</h2>
+
+        <div>
+            <label for="figure">Figure</label>
+            <select id="figure">
+                <option>circle</option>
+                <option>other</option>
+            </select>
+        </div>
+
+        <div class="slider">
+            <label for="mutationslider">Mutation</label>
+            <input id="mutationslider" type="range" min="0" max="1" step=".05" value=".1"/>
+            <input id="mutationslidervalue" type="text" value=".1" readonly/>
+        </div>
+
+
+        <div>
+            <button id="start">Start evolution</button>
+        </div>
+
+        figure
+        Mutation chance
+        Elites
+        populationSize
+        crossover
     </div>
 </div>
 
 <div class="desc">
     <h2>Information</h2>
 
+    <p>Works by contracting "muscles"</p>
+
+    <h3>Controls</h3>
+    <p>
+        <b>Speed</b> controls how fast the simulation progresses<br/>
+        <b>CameraX</b> lets you adjust the position of the camera<br/>
+        <b>Creature</b> is how the creature should look<br/>
+        <b>Mutation chance</b> the chance of some muscle having its contraction characteristics changed<br/>
+        <b>Creature</b> how many of the best creatures are guaranteed to survive to the next generation<br/>
+        <b>Population size</b> how many creatures there should be<br/>
+    </p>
 
     <p>Inspired by <a href="https://youtu.be/3zqaBS5_6LM">this video</a> by Junior Rojas,
         <a href="http://boxcar2d.com/">Boxcard2d</a> and its browser predecessor
