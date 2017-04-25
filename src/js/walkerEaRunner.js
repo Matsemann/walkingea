@@ -22,15 +22,11 @@ export default function evolveWalkers(options) {
         return population;
     }
 
-    function fitnessFunction(phenotypes, callback) {
-        simulate(creatureType, phenotypes, (results) => {
-            const fitnesses = [];
+    async function fitnessFunction(phenotypes) {
+        const results = await simulate(creatureType, phenotypes)
 
-
-            callback(results.map(r => r.distance));
-            // convert results to fitness values
-
-        });
+        // convert results to fitness values
+        return results.map(r => r.distance);
     }
 
     function adultSelectionFunction(oldPopulation, oldFitnesses, children, childrenFitnesses) {

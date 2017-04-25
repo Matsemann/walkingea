@@ -12,20 +12,21 @@ let simulationTimeout = null;
 let renderInterval = null;
 
 let simulation = null;
-let callback = null;
+let promiseResolve = null;
 
 
 const canvas = document.getElementById('mainCanvas');
 const ctx = canvas.getContext('2d');
 
-export function simulate(creatureType, phenotypes, cb) {
-    let rnd = Math.random();
+export function simulate(creatureType, phenotypes) {
     finished = false;
     simulation = new Simulation(creatureType, phenotypes);
-    callback = cb;
 
-    startSimulation(rnd);
+
+    startSimulation();
     startRendering();
+
+    return new Promise(resolve => promiseResolve = resolve);
 }
 
 export function setSimulationIterations(nr) {
@@ -36,8 +37,7 @@ export function setCameraX(x) {
     simulation.camera.pos.x = x;
 }
 
-function startSimulation(rnd) {
-    console.log(rnd);
+function startSimulation() {
     for (let i = 0; i < simulationIterations; i++) {
         simulation.update();
     }
@@ -50,7 +50,7 @@ function startSimulation(rnd) {
             timeout = 1; // to not have 1/60 timeout when trying to speed up very fast
         }
 
-        simulationTimeout = setTimeout(() => startSimulation(rnd), timeout);
+        simulationTimeout = setTimeout(startSimulation, timeout);
     }
 }
 
@@ -63,16 +63,14 @@ function startRendering() {
 function finishSimulation() {
     endSimulation();
 
-    if (callback) {
-        const result = simulation.creatures.map(c => {
-            return {
-                maxDst: c.maxDst,
-                distance: c.findDst()
-            }
-        });
+    const result = simulation.creatures.map(c => {
+        return {
+            maxDst: c.maxDst,
+            distance: c.findDst()
+        }
+    });
 
-        callback(result);
-    }
+    promiseResolve(result);
 }
 export function endSimulation() {
     clearTimeout(simulationTimeout);
