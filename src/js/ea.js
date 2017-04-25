@@ -6,9 +6,8 @@ export function runEa({generatePopulation, fitness, adultSelection, parentSelect
     let population = generatePopulation();
 
     function iteration() {
+
         fitness(population, (fitnesses) => {
-            console.log("finished fitness");
-            console.log(fitnesses);
             const parents = parentSelection(population, fitnesses);
 
             const children = [];

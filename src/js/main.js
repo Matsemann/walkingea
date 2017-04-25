@@ -3,7 +3,7 @@ import {simulate, setSimulationIterations, setCameraX, endSimulation} from './wa
 import evolveWalkers from './walkerEaRunner.js';
 
 function startSimulation() {
-    //endSimulation();
+    endSimulation();
     const options = {
         mutationRate: parseFloat(document.getElementById('mutationslider').value),
         creatureType: document.getElementById('figure').value,
@@ -37,7 +37,5 @@ document.getElementById('mutationslider').addEventListener('input', () => {
 });
 
 document.getElementById('start').addEventListener('click', () => {
-    endSimulation();
-
-    //startSimulation();
+    startSimulation();
 });

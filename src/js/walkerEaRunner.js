@@ -3,10 +3,10 @@ import {runEa} from './ea.js';
 import {simulate} from './walkSimulator.js';
 
 export default function evolveWalkers(options) {
-    const mutationRate = 0; //options.mutationRate;
+    const mutationRate = .9; //options.mutationRate;
     const creatureType = options.creatureType;
     const populationSize = options.populationSize;
-    const crossoverRate = 0.0;
+    const crossoverRate = 0.2;
 
     const numberOfGenes = creatureDefinitions[creatureType].edges.length;
 
@@ -56,9 +56,9 @@ export default function evolveWalkers(options) {
 
         }
 
-        //return parents;
+        return parents;
 
-        return population;
+        //return population;
         // make it select parents based on fitness
     }
 

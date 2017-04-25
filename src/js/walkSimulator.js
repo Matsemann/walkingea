@@ -3,7 +3,7 @@ import Creature from './creature.js';
 
 const nrGrounds = 4;
 const groundsDistance = 3;
-const simulationTime = 20; // seconds
+const simulationTime = 40; // seconds
 let finished = false;
 
 const simFreq = 1 / 60;
@@ -43,9 +43,9 @@ function startSimulation(rnd) {
     }
 
     if (simulation.isFinished()) {
-        endSimulation();
+        finishSimulation();
     } else {
-        var timeout = 1000 * simFreq;
+        let timeout = 1000 * simFreq;
         if (simulationIterations > 15) {
             timeout = 1; // to not have 1/60 timeout when trying to speed up very fast
         }
@@ -60,10 +60,8 @@ function startRendering() {
     }, 1000 * simFreq);
 }
 
-export function endSimulation() {
-    finished = true;
-    clearTimeout(simulationTimeout);
-    clearInterval(renderInterval);
+function finishSimulation() {
+    endSimulation();
 
     if (callback) {
         const result = simulation.creatures.map(c => {
@@ -76,7 +74,15 @@ export function endSimulation() {
         callback(result);
     }
 }
+export function endSimulation() {
+    clearTimeout(simulationTimeout);
+    clearInterval(renderInterval);
 
+    if (simulation) {
+        simulation.timeout = simulationTime + 1;
+    }
+
+}
 
 
 class Simulation {
@@ -93,8 +99,7 @@ class Simulation {
 
         this.creatures = phenotypes.map((p, i) => {
             const offsett = (i % nrGrounds) * groundsDistance;
-            // TODO use p
-            return new Creature(creatureType, this.world, getRandomColor(), offsett);
+            return new Creature(creatureType, p, this.world, getRandomColor(), offsett);
         });
         this.timePassed = 0;
 

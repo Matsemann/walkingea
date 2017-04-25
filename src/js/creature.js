@@ -6,16 +6,16 @@ import defs from './creatureDefinitions.js';
 
 export default class Creature {
 
-    constructor(d, world, color, offset) {
+    constructor(d, movements, world, color, offset) {
         const definition = defs[d];
 
         this.color = color;
         this.bodies = [];
         this.joints = [];
         this.jointLengths = [];
-        this.movements = [];
+        this.movements = movements;
 
-        this.maxDst = 0;
+        this.maxDst = -200;
 
 
         const shape = Circle(.1);
@@ -58,7 +58,7 @@ export default class Creature {
             world.createJoint(joint);
             this.joints.push(joint);
             this.jointLengths.push(joint.getLength());
-            this.movements.push(Math.random());
+            //this.movements.push(Math.random());
             //this.movements.push(.2);
         }
 
@@ -88,7 +88,7 @@ export default class Creature {
     }
 
     findDst() {
-        let max = 0;
+        let max = -200;
         this.bodies.forEach(b => {
             const x = b.getPosition().x;
             if (x > max) {
