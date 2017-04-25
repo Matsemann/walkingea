@@ -81,12 +81,21 @@ export default class Creature {
     }
 
     findMaxDst() {
+        var dst = this.findDst();
+        if (dst > this.maxDst) {
+            this.maxDst = dst;
+        }
+    }
+
+    findDst() {
+        let max = 0;
         this.bodies.forEach(b => {
             const x = b.getPosition().x;
-            if (x > this.maxDst) {
-                this.maxDst = x;
+            if (x > max) {
+                max = x;
             }
         });
+        return max;
     }
 
 

@@ -1,16 +1,21 @@
 import css from '../css/styles.css';
 import {simulate, setSimulationIterations, setCameraX, endSimulation} from './walkSimulator.js';
-
+import evolveWalkers from './walkerEaRunner.js';
 
 function startSimulation() {
-    endSimulation();
+    //endSimulation();
     const options = {
         mutationRate: parseFloat(document.getElementById('mutationslider').value),
-        creatureType: document.getElementById('figure').value
-
+        creatureType: document.getElementById('figure').value,
+        populationSize: 20 // todo
     };
+
+
     console.log(options);
-    simulate('circle', [1, 2, 3, 4, 5], () => console.log("done"));
+
+    evolveWalkers(options);
+
+    //simulate('circle', [1, 2, 3, 4, 5], () => console.log("done"));
 
 }
 
@@ -32,5 +37,7 @@ document.getElementById('mutationslider').addEventListener('input', () => {
 });
 
 document.getElementById('start').addEventListener('click', () => {
-    startSimulation();
+    endSimulation();
+
+    //startSimulation();
 });

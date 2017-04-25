@@ -3,7 +3,7 @@ import Creature from './creature.js';
 
 const nrGrounds = 4;
 const groundsDistance = 3;
-const simulationTime = 60000; // seconds
+const simulationTime = 20; // seconds
 let finished = false;
 
 const simFreq = 1 / 60;
@@ -19,11 +19,12 @@ const canvas = document.getElementById('mainCanvas');
 const ctx = canvas.getContext('2d');
 
 export function simulate(creatureType, phenotypes, cb) {
+    let rnd = Math.random();
     finished = false;
     simulation = new Simulation(creatureType, phenotypes);
     callback = cb;
 
-    startSimulation();
+    startSimulation(rnd);
     startRendering();
 }
 
@@ -35,20 +36,21 @@ export function setCameraX(x) {
     simulation.camera.pos.x = x;
 }
 
-function startSimulation() {
+function startSimulation(rnd) {
+    console.log(rnd);
     for (let i = 0; i < simulationIterations; i++) {
-        if (!simulation.update()) {
-            break;
-        }
+        simulation.update();
     }
 
-    if (!finished) {
+    if (simulation.isFinished()) {
+        endSimulation();
+    } else {
         var timeout = 1000 * simFreq;
         if (simulationIterations > 15) {
             timeout = 1; // to not have 1/60 timeout when trying to speed up very fast
         }
 
-        simulationTimeout = setTimeout(startSimulation, timeout);
+        simulationTimeout = setTimeout(() => startSimulation(rnd), timeout);
     }
 }
 
@@ -64,13 +66,17 @@ export function endSimulation() {
     clearInterval(renderInterval);
 
     if (callback) {
-        callback("yoyo");
+        const result = simulation.creatures.map(c => {
+            return {
+                maxDst: c.maxDst,
+                distance: c.findDst()
+            }
+        });
+
+        callback(result);
     }
 }
 
-function simulationFinished() {
-    endSimulation();
-}
 
 
 class Simulation {
@@ -98,15 +104,16 @@ class Simulation {
     update() {
         this.timePassed += simFreq;
 
-        if (this.timePassed >= simulationTime) {
-         simulationFinished(); // TODO
-         return false;
-         }
+        if (this.isFinished()) {
+            return;
+        }
 
         this.creatures.forEach(c => c.update(this.timePassed));
-
         this.world.step(simFreq);
-        return true;
+    }
+
+    isFinished() {
+        return this.timePassed >= simulationTime;
     }
 
     render() {
