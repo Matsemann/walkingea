@@ -10,6 +10,7 @@ export default class Creature {
         const definition = defs[d];
 
         this.color = color;
+        this.offset = offset;
         this.bodies = [];
         this.joints = [];
         this.jointLengths = [];
@@ -24,7 +25,7 @@ export default class Creature {
             const p = definition.points[i];
             const bodyDef = {
                 type: 'dynamic',
-                position: Vec2(p[0], p[1] + offset),
+                position: Vec2(p[0], p[1]),
                 linearDamping: .8,
                 angularDamping: .5,
                 fixedRotation: true
@@ -107,14 +108,9 @@ export default class Creature {
             const p = b.getPosition();
             const a = b.getAngle();
             ctx.beginPath();
-            ctx.arc(p.x, p.y, .1, 0, 2 * Math.PI);
+            ctx.arc(p.x, p.y + this.offset, .1, 0, 2 * Math.PI);
             ctx.fill();
 
-            /*ctx.strokeStyle = 'blue';
-            ctx.beginPath();
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(p.x * Math.cos(a) - (p.y + .1) * Math.sin(a), p.x * Math.sin(a) + (p.y + .1) * Math.cos(a));
-            ctx.stroke();*/
         });
 
         this.joints.forEach(j => {
@@ -126,8 +122,8 @@ export default class Creature {
             ctx.strokeStyle = `rgba(0, 0, 0, 0.6)`;
             ctx.lineWidth=.05;
             ctx.beginPath();
-            ctx.moveTo(a.x, a.y);
-            ctx.lineTo(b.x, b.y);
+            ctx.moveTo(a.x, a.y + this.offset);
+            ctx.lineTo(b.x, b.y + this.offset);
             ctx.stroke();
         })
     }

@@ -1,8 +1,8 @@
 import {World, Vec2, Edge, Box, DistanceJoint} from 'planck-js';
 import Creature from './creature.js';
 
-const nrGrounds = 4;
-const groundsDistance = 3;
+const nrGrounds = 5;
+const groundsDistance = 2.5;
 const simulationTime = 40; // seconds
 let finished = false;
 
@@ -88,11 +88,11 @@ class Simulation {
     constructor(creatureType, phenotypes) {
         this.camera = {
             pos: Vec2(5, 5.5),
-            zoom: 50,
+            zoom: 45,
         };
 
         this.world = new World(Vec2(0, -10));
-        this.createGrounds();
+        this.createGround();
 
 
         this.creatures = phenotypes.map((p, i) => {
@@ -140,14 +140,14 @@ class Simulation {
     }
 
     renderGrounds() {
-        this.grounds.forEach((g, i) => {
+        for (let i = 0; i < nrGrounds; i++) {
             ctx.beginPath();
             ctx.lineWidth = .01;
 
             ctx.moveTo(-40, i * groundsDistance);
             ctx.lineTo(100, i * groundsDistance);
             ctx.stroke();
-        });
+        }
     }
 
     renderMaxLine() {
@@ -173,14 +173,10 @@ class Simulation {
     }
 
 
-    createGrounds() {
-        this.grounds = [];
-        for (let i = 0; i < nrGrounds; i++) {
-            const g = this.world.createBody();
-            g.createFixture(Edge(Vec2(-40.0, i * groundsDistance), Vec2(100.0, i * groundsDistance)),
-                {density: 0, friction: 1.5});
-            this.grounds.push(g);
-        }
+    createGround() {
+        this.ground = this.world.createBody();
+        this.ground.createFixture(Edge(Vec2(-40.0, 0), Vec2(100.0, 0)),
+            {density: 0, friction: 1.5});
 
     }
 

@@ -9,6 +9,7 @@ export function runEa({generatePopulation, fitness, adultSelection, parentSelect
 
         while(true) {
             const fitnesses = await fitness(population);
+            console.log(fitnesses);
 
             const parents = parentSelection(population, fitnesses);
 
@@ -28,7 +29,7 @@ export function runEa({generatePopulation, fitness, adultSelection, parentSelect
 
             children.forEach(c => mutate(c));
 
-            population = children;
+            population = adultSelection(population, fitnesses, children);
         }
     }
 

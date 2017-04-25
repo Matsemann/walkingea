@@ -3,9 +3,9 @@ import {runEa} from './ea.js';
 import {simulate} from './walkSimulator.js';
 
 export default function evolveWalkers(options) {
-    const mutationRate = .9; //options.mutationRate;
+    const mutationRate = .5; //options.mutationRate;
     const creatureType = options.creatureType;
-    const populationSize = options.populationSize;
+    const populationSize = 20;//options.populationSize;
     const crossoverRate = 0.2;
 
     const numberOfGenes = creatureDefinitions[creatureType].edges.length;
@@ -29,8 +29,14 @@ export default function evolveWalkers(options) {
         return results.map(r => r.distance);
     }
 
-    function adultSelectionFunction(oldPopulation, oldFitnesses, children, childrenFitnesses) {
-        return children;
+    function adultSelectionFunction(oldPopulation, oldFitnesses, children) {
+
+        const sortedFitnesses = oldFitnesses.slice().sort().reverse();
+
+        const bestIndex = oldFitnesses.indexOf(sortedFitnesses[0]);
+        const secondBestIndex = oldFitnesses.indexOf(sortedFitnesses[1]);
+
+        return children.concat([oldPopulation[secondBestIndex], oldPopulation[bestIndex]]);
     }
 
     function parentSelectionFunction(population, fitnesses) {
@@ -61,7 +67,9 @@ export default function evolveWalkers(options) {
     function mutateFunction(individual) {
         if (Math.random() <= mutationRate) {
             const geneToMutate = Math.floor(Math.random() * individual.length);
-            individual[geneToMutate] = Math.random();
+            const value = Math.max(0, Math.min(1, individual[geneToMutate] + gauss()));
+
+            individual[geneToMutate] = value;
         }
     }
 
@@ -86,4 +94,9 @@ export default function evolveWalkers(options) {
         crossover: crossoverFunction
     });
 
+
+    function gauss() {
+        return (Math.random() + Math.random() + Math.random()
+         + Math.random() + Math.random() + Math.random() - 3) / 3;
+    }
 }
