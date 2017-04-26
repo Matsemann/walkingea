@@ -23,66 +23,26 @@ export default function evolveWalkers(options) {
     }
 
     async function fitnessFunction(phenotypes) {
-        const results = await simulate(creatureType, phenotypes)
+        const results = await simulate(creatureType, phenotypes);
 
-        // convert results to fitness values
-        return results.map(r => r.distance);
+        return results.map(r => {
+            // har r.maxDst og r.distance
+            return 0;
+        });
     }
 
     function adultSelectionFunction(oldPopulation, oldFitnesses, children) {
-
-        const sortedFitnesses = oldFitnesses.slice().sort((a, b) => a - b).reverse();
-
-        const bestIndex = oldFitnesses.indexOf(sortedFitnesses[0]);
-        const secondBestIndex = oldFitnesses.indexOf(sortedFitnesses[1]);
-
-        return children.concat([oldPopulation[secondBestIndex], oldPopulation[bestIndex]]);
+        return children;
     }
 
     function parentSelectionFunction(population, fitnesses) {
-
-        let parents = [];
-
-        for (let i = 0; i < populationSize; i++) {
-
-            let index1 = Math.floor(Math.random() * population.length);
-            let index2 = Math.floor(Math.random() * population.length);
-
-            let f1 = fitnesses[index1];
-            let f2 = fitnesses[index2];
-            if (f1 >= f2) {
-                parents.push(population[index1]);
-            } else {
-                parents.push(population[index2]);
-            }
-
-        }
-
-        return parents;
-
-        //return population;
-        // make it select parents based on fitness
+        return population;
     }
 
     function mutateFunction(individual) {
-        if (Math.random() <= mutationRate) {
-            const geneToMutate = Math.floor(Math.random() * individual.length);
-            const value = Math.max(0, Math.min(1, individual[geneToMutate] + gauss()));
-
-            individual[geneToMutate] = value;
-        }
     }
 
     function crossoverFunction(parent1, parent2) {
-        if (Math.random() < crossoverRate) {
-            const crossoverPoint = Math.floor(Math.random() * parent1.length);
-
-            for (let i = 0; i < crossoverPoint; i++) {
-                const value = parent1[i];
-                parent1[i] = parent2[i];
-                parent2[i] = value;
-            }
-        }
     }
 
     runEa({
@@ -93,10 +53,4 @@ export default function evolveWalkers(options) {
         mutate: mutateFunction,
         crossover: crossoverFunction
     });
-
-
-    function gauss() {
-        return (Math.random() + Math.random() + Math.random()
-         + Math.random() + Math.random() + Math.random() - 3) / 3;
-    }
 }

@@ -1,5 +1,5 @@
 import css from '../css/styles.css';
-import {simulate, setSimulationIterations, setCameraX, endSimulation} from './simulator/walkSimulator.js';
+import {setSimulationIterations, endSimulation} from './simulator/walkSimulator.js';
 import evolveWalkers from './walkerEaRunner.js';
 
 function startSimulation() {
@@ -25,11 +25,6 @@ document.getElementById('speedslider').addEventListener('input', () => {
     setSimulationIterations(value);
     document.getElementById('speedslidervalue').value = value;
 });
-/*document.getElementById('cameraslider').addEventListener('input', () => {
-    let value = document.getElementById('cameraslider').value;
-    setCameraX(value);
-    document.getElementById('cameraslidervalue').value = value;
-});*/
 document.getElementById('mutationslider').addEventListener('input', () => {
     let value = document.getElementById('mutationslider').value;
     document.getElementById('mutationslidervalue').value = value;
