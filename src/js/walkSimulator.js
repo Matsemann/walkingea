@@ -1,13 +1,13 @@
-import {World, Vec2, Edge, Box, DistanceJoint} from 'planck-js';
+import {World, Vec2, Edge} from 'planck-js';
 import Creature from './creature.js';
 
 const nrGrounds = 5;
 const groundsDistance = 2.5;
-const simulationTime = 40; // seconds
+const simulationTime = 60; // seconds
 let finished = false;
 
 const simFreq = 1 / 60;
-let simulationIterations = 1;
+let simulationIterations = 2;
 let simulationTimeout = null;
 let renderInterval = null;
 
@@ -122,7 +122,7 @@ class Simulation {
     render() {
         const camera = this.camera;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillText(this.timePassed, 10, 10);
+        ctx.fillText(this.timePassed.toFixed(1), 10, 10);
 
         ctx.save();
 
@@ -152,10 +152,16 @@ class Simulation {
 
     renderMaxLine() {
         var max = 0;
+        var currMax = 0;
         this.creatures.forEach(c => {
             const x = c.maxDst;
+            const currX = c.findDst();
             if (x > max) {
                 max = x;
+            }
+
+            if (currX > currMax) {
+                currMax = currX;
             }
         });
 
@@ -165,10 +171,24 @@ class Simulation {
         ctx.lineTo(0, 17);
         ctx.stroke();
 
+        ctx.save();
+        ctx.font = '0.3px serif';
+        ctx.scale(1, -1);
+        ctx.fillText(max.toFixed(2), max+0.1, 1);
+        ctx.fillText(currMax.toFixed(2), currMax-.8, 1);
+
+        ctx.restore();
+
         ctx.beginPath();
         ctx.lineWidth = .01;
         ctx.moveTo(max, -5);
         ctx.lineTo(max, 17);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.lineWidth = .005;
+        ctx.moveTo(currMax, -5);
+        ctx.lineTo(currMax, 17);
         ctx.stroke();
     }
 

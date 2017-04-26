@@ -6,16 +6,15 @@ function startSimulation() {
     endSimulation();
     const options = {
         mutationRate: parseFloat(document.getElementById('mutationslider').value),
+        crossoverRate: parseFloat(document.getElementById('crossoverslider').value),
         creatureType: document.getElementById('figure').value,
-        populationSize: 20 // todo
+        populationSize: document.getElementById('populationslider').value
     };
 
 
     console.log(options);
 
     evolveWalkers(options);
-
-    //simulate('circle', [1, 2, 3, 4, 5], () => console.log("done"));
 
 }
 
@@ -34,6 +33,14 @@ document.getElementById('cameraslider').addEventListener('input', () => {
 document.getElementById('mutationslider').addEventListener('input', () => {
     let value = document.getElementById('mutationslider').value;
     document.getElementById('mutationslidervalue').value = value;
+});
+document.getElementById('crossoverslider').addEventListener('input', () => {
+    let value = document.getElementById('crossoverslider').value;
+    document.getElementById('crossoverslidervalue').value = value;
+});
+document.getElementById('populationslider').addEventListener('input', () => {
+    let value = document.getElementById('populationslider').value;
+    document.getElementById('populationslidervalue').value = value;
 });
 
 document.getElementById('start').addEventListener('click', () => {

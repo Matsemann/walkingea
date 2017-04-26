@@ -3,10 +3,10 @@ import {runEa} from './ea.js';
 import {simulate} from './walkSimulator.js';
 
 export default function evolveWalkers(options) {
-    const mutationRate = .5; //options.mutationRate;
+    const mutationRate = options.mutationRate;
     const creatureType = options.creatureType;
-    const populationSize = 20;//options.populationSize;
-    const crossoverRate = 0.2;
+    const populationSize = options.populationSize;
+    const crossoverRate = options.crossoverRate;
 
     const numberOfGenes = creatureDefinitions[creatureType].edges.length;
 
@@ -31,7 +31,7 @@ export default function evolveWalkers(options) {
 
     function adultSelectionFunction(oldPopulation, oldFitnesses, children) {
 
-        const sortedFitnesses = oldFitnesses.slice().sort().reverse();
+        const sortedFitnesses = oldFitnesses.slice().sort((a, b) => a - b).reverse();
 
         const bestIndex = oldFitnesses.indexOf(sortedFitnesses[0]);
         const secondBestIndex = oldFitnesses.indexOf(sortedFitnesses[1]);

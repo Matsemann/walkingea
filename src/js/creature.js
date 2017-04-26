@@ -1,7 +1,6 @@
-import {World, Vec2, Edge, Box, DistanceJoint, Circle} from 'planck-js';
+import {Vec2, DistanceJoint, Circle} from 'planck-js';
 
 import defs from './creatureDefinitions.js';
-
 
 
 export default class Creature {
@@ -34,7 +33,7 @@ export default class Creature {
             const fixtureDef = {
                 density: 1,
                 friction: 1000.5,
-                restitution: 0,
+                restitution: 0.1,
                 filterGroupIndex: -1
             };
 
@@ -60,10 +59,9 @@ export default class Creature {
             this.joints.push(joint);
             this.jointLengths.push(joint.getLength());
             //this.movements.push(Math.random());
-            //this.movements.push(.2);
+            //this.movements.push(.05 + offset / 5);
         }
 
-        //this.movements[0] = 10;
     }
 
     update(time) {
