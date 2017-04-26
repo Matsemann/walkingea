@@ -12,7 +12,9 @@ var config = {
     },
     devServer: {
         open: false,
-        contentBase: __dirname + '/src'
+        contentBase: __dirname + '/src',
+        hot: false,
+        inline: false
     },
 
     module: {
