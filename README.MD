@@ -1,7 +1,7 @@
 WalkingEa
 =========
 
-![Animation](http://i.imgur.com/yy7HWTG.gif)
+![Animation](eagif4.gif?raw=true)
 
 
 To run
