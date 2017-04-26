@@ -1,6 +1,6 @@
-import creatureDefinitions from './creatureDefinitions.js';
+import creatureDefinitions from './simulator/creatureDefinitions.js';
+import {simulate} from './simulator/walkSimulator.js';
 import {runEa} from './ea.js';
-import {simulate} from './walkSimulator.js';
 
 export default function evolveWalkers(options) {
     const mutationRate = options.mutationRate;

@@ -3,6 +3,8 @@ let currentGeneration = 1;
 
 export function runEa({generatePopulation, fitness, adultSelection, parentSelection, crossover, mutate}) {
 
+    currentGeneration = 1;
+    debugInfo([0]);
     let population = generatePopulation();
 
     async function iteration() {
@@ -10,6 +12,7 @@ export function runEa({generatePopulation, fitness, adultSelection, parentSelect
         while(true) {
             const fitnesses = await fitness(population);
             console.log(fitnesses);
+            debugInfo(fitnesses);
 
             const parents = parentSelection(population, fitnesses);
 
@@ -30,6 +33,7 @@ export function runEa({generatePopulation, fitness, adultSelection, parentSelect
             children.forEach(c => mutate(c));
 
             population = adultSelection(population, fitnesses, children);
+            currentGeneration++;
         }
     }
 
@@ -40,4 +44,16 @@ export function runEa({generatePopulation, fitness, adultSelection, parentSelect
 
 function copy(individual) {
     return individual.slice();
+}
+
+function debugInfo(fitnesses) {
+    let max = -99999;
+    fitnesses.forEach(f => {
+        if (f > max) {
+            max = f;
+        }
+    });
+
+
+    document.getElementById("debugInfo").innerHTML = `<b>Generation: <b/>${currentGeneration}, <b>Best fitness: </b>${max.toFixed((2))}`;
 }
