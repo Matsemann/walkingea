@@ -1,0 +1,45 @@
+body {
+    background: #eee;
+}
+
+.container {
+    width: 1200px;
+}
+
+.canvas {
+    width: 800px;
+    float: left;
+}
+
+.controls {
+    width: 350px;
+    float: right;
+}
+
+.inline {
+    float: left;
+}
+
+.slider {
+    padding: 10px 10px 10px 0;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+}
+
+.slider input[type="range"] {
+    width: 150px;
+    position: relative;
+    top: 5px;
+}
+.slider input[type="text"] {
+    width: 30px;
+}
+
+.desc {
+    clear: both;
+    padding-top: 5px;
+}
+/*# sourceMappingURL=styles.css.map*/

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Walking EA - Evolve</title>
+    <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+
+<h1>Walking EA</h1>
+<p>Press start evolution over at the right. Scroll down for a description.</p>
+
+<div class="container">
+
+    <div class="canvas">
+        <canvas id="mainCanvas" width="800" height="600"></canvas>
+
+        <div class="slider inline">
+            <label for="speedslider">Speed</label>
+            <input id="speedslider" type="range" min="1" max="50" step="1" value="2"/>
+            <input id="speedslidervalue" type="text" value="2" readonly/>
+        </div>
+        <div id="debugInfo">
+
+        </div>
+        <!--
+        <div class="slider inline">
+            <label for="cameraslider">CameraX</label>
+            <input id="cameraslider" type="range" min="-50" max="100" step="1" value="5"/>
+            <input id="cameraslidervalue" type="text" value="5" readonly/>
+        </div>-->
+    </div>
+
+    <div class="controls">
+        <h2>Controls</h2>
+
+        <div>
+            <label for="figure">Figure</label>
+            <select id="figure">
+                <option>circle</option>
+                <option>something</option>
+                <option>rojas</option>
+            </select>
+        </div>
+
+        <div class="slider">
+            <label for="mutationslider">Mutation</label>
+            <input id="mutationslider" type="range" min="0" max="1" step=".05" value=".6"/>
+            <input id="mutationslidervalue" type="text" value=".6" readonly/>
+        </div>
+
+        <div class="slider">
+            <label for="crossoverslider">Crossover</label>
+            <input id="crossoverslider" type="range" min="0" max="1" step=".05" value=".5"/>
+            <input id="crossoverslidervalue" type="text" value=".5" readonly/>
+        </div>
+
+        <div class="slider">
+            <label for="populationslider">Population size</label>
+            <input id="populationslider" type="range" min="2" max="100" step="2" value="20"/>
+            <input id="populationslidervalue" type="text" value="20" readonly/>
+        </div>
+
+
+        <div>
+            <button id="start">Start evolution</button>
+        </div>
+
+    </div>
+</div>
+
+<div class="desc">
+    <h2>Information</h2>
+
+    <p>Works by contracting "muscles"</p>
+
+    <h3>Controls</h3>
+    <p>
+        <b>Speed</b> controls how fast the simulation progresses<br/>
+        <b>Creature</b> is how the creature should look<br/>
+        <b>Mutation chance</b> the chance of some muscle having its contraction characteristics changed<br/>
+        <b>Crossover chance</b> the chance of two parents being mixed<br/>
+        <b>Population size</b> how many creatures there should be<br/>
+    </p>
+
+    <p>Inspired by <a href="https://youtu.be/3zqaBS5_6LM">this video</a> by Junior Rojas,
+        <a href="http://boxcar2d.com/">Boxcard2d</a> and its browser predecessor
+        <a href="http://rednuht.org/genetic_cars_2/">Genetic Cars 2</a>.
+    </p>
+</div>
+
+
+<script src="/bundle.js"></script>
+</body>
+</html>
