@@ -1,6 +1,8 @@
 WalkingEa
 =========
 
+Try it out: https://matsemann.github.io/walkingea/
+
 ![Animation](eagif4.gif?raw=true)
 
 
