@@ -25,11 +25,11 @@ document.getElementById('speedslider').addEventListener('input', () => {
     setSimulationIterations(value);
     document.getElementById('speedslidervalue').value = value;
 });
-document.getElementById('cameraslider').addEventListener('input', () => {
+/*document.getElementById('cameraslider').addEventListener('input', () => {
     let value = document.getElementById('cameraslider').value;
     setCameraX(value);
     document.getElementById('cameraslidervalue').value = value;
-});
+});*/
 document.getElementById('mutationslider').addEventListener('input', () => {
     let value = document.getElementById('mutationslider').value;
     document.getElementById('mutationslidervalue').value = value;

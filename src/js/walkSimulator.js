@@ -165,6 +165,10 @@ class Simulation {
             }
         });
 
+        if (max > this.camera.pos.x + 3) {
+            this.camera.pos.x = max - 3;
+        }
+
         ctx.beginPath();
         ctx.lineWidth = .005;
         ctx.moveTo(0, -5);
