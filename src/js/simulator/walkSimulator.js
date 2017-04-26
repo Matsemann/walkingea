@@ -130,6 +130,7 @@ class Simulation {
             canvas.height / 2 + (camera.pos.y * camera.zoom));
         ctx.scale(camera.zoom, -camera.zoom);
 
+        this.renderGrid();
         this.renderGrounds();
         this.renderMaxLine();
 
@@ -148,6 +149,23 @@ class Simulation {
             ctx.lineTo(100, i * groundsDistance);
             ctx.stroke();
         }
+    }
+
+    renderGrid() {
+
+        for (let i = -40; i <= 100; i += 5) {
+
+            ctx.beginPath();
+            ctx.lineWidth = .008;
+            if (i == 0) {
+                ctx.lineWidth = 0.05;
+            }
+            ctx.moveTo(i, -5);
+            ctx.lineTo(i, 17);
+            ctx.stroke();
+        }
+
+
     }
 
     renderMaxLine() {
@@ -169,22 +187,18 @@ class Simulation {
             this.camera.pos.x = max - 3;
         }
 
-        ctx.beginPath();
-        ctx.lineWidth = .005;
-        ctx.moveTo(0, -5);
-        ctx.lineTo(0, 17);
-        ctx.stroke();
-
         ctx.save();
         ctx.font = '0.3px serif';
         ctx.scale(1, -1);
+        ctx.fillText("Best", max+0.1, 0.75);
         ctx.fillText(max.toFixed(2), max+0.1, 1);
+        ctx.fillText("Current", currMax-1.2, 0.75);
         ctx.fillText(currMax.toFixed(2), currMax-.8, 1);
 
         ctx.restore();
 
         ctx.beginPath();
-        ctx.lineWidth = .01;
+        ctx.lineWidth = .02;
         ctx.moveTo(max, -5);
         ctx.lineTo(max, 17);
         ctx.stroke();
