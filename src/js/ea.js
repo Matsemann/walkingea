@@ -8,38 +8,34 @@ export function runEa({generatePopulation, fitness, adultSelection, parentSelect
     let population = generatePopulation();
 
     async function iteration() {
+        const fitnesses = await fitness(population);
+        console.log(fitnesses);
+        debugInfo(fitnesses);
 
-        while(true) {
-            const fitnesses = await fitness(population);
-            console.log(fitnesses);
-            debugInfo(fitnesses);
+        const parents = parentSelection(population, fitnesses);
 
-            const parents = parentSelection(population, fitnesses);
+        const children = [];
 
-            const children = [];
+        for (let i = 0; i < parents.length; i += 2) {
+            const parent1 = parents[i];
+            const parent2 = parents[(i + 1) % parents.length];
 
-            for (let i = 0; i < parents.length; i += 2) {
-                const parent1 = parents[i];
-                const parent2 = parents[(i + 1) % parents.length];
+            const child1 = copy(parent1);
+            const child2 = copy(parent2);
 
-                const child1 = copy(parent1);
-                const child2 = copy(parent2);
-
-                crossover(child1, child2);
-                children.push(child1);
-                children.push(child2);
-            }
-
-            children.forEach(c => mutate(c));
-
-            population = adultSelection(population, fitnesses, children);
-            currentGeneration++;
+            crossover(child1, child2);
+            children.push(child1);
+            children.push(child2);
         }
+
+        children.forEach(c => mutate(c));
+
+        population = adultSelection(population, fitnesses, children);
+        currentGeneration++;
+        setTimeout(iteration, 0);
     }
 
     iteration();
-
-
 }
 
 function copy(individual) {
@@ -55,5 +51,6 @@ function debugInfo(fitnesses) {
     });
 
 
-    document.getElementById("debugInfo").innerHTML = `<b>Generation: <b/>${currentGeneration}, <b>Best fitness: </b>${max.toFixed((2))}`;
+    document.getElementById("debugInfo").innerHTML = `<b>Generation: <b/>${currentGeneration}, <b>Best fitness: </b>${max.toFixed(
+        (2))}`;
 }
