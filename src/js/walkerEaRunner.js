@@ -20,20 +20,13 @@ export default function evolveWalkers(options) {
      * @returns {Individual[]}
      */
     function generatePopulationFunction() {
-        /**
-         * @type {Individual[]}
-         */
         const population = [];
-        for (let i = 0; i < populationSize; i++) {
-            const genes = [];
-            for (let j = 0; j < numberOfGenes; j++) {
-                genes.push(Math.random());
-            }
-            population.push({
-                genes: genes,
-                fitness: 0
-            });
-        }
+
+        population.push({
+            genes: new Array(numberOfGenes).fill(0.1),
+            fitness: 0
+        });
+
         return population;
     }
 

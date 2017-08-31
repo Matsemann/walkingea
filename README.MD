@@ -19,35 +19,41 @@ Open http://localhost:8080 in your browser
 OPPGAVE
 -------
 
-Vi har laget en simulator og en basic EA-loop.
-Deres oppgave er å lage resten av EA-algoritmen, slik
-at strekfigurene lærer å gå.
+Vi har laget en simulator og en basic EA-loop. Loopen kaller stort sett bare på et sett funksjoner, som dere må implementere.
+I hovedsak fila `walkerEaRunner.js` det skal endres i. Målet er å skrive kode som klarer å avle frem individer som har lært å gå.
 
-Phenotypen/DNAet er i dette tilfellet et array med flyttallsverdier/floats.
-Antall verdier tilsvarer antall kanter på strekfiguren. Gyldig domene for tallene er 0 til 1.
-Tallene i phenotypen brukes i simulatoren for å kontrollere sinusfunksjonen som trekker "musklene" sammen.
+### Oppgave 1
 
+I simulatoren ser dere nå bare en enslig stakkar. Vi trenger derimot en hel populasjon, så første oppgave går ut på å opprette flere individer. 
 
-Det er i hovedsak fila `walkerEaRunner.js` det skal endres i. Skjellettet er fylt ut slik at simulatoren allerede kjører i det man begynner.
+* Endre på `generatePopulationFunction()` slik at den returnerer like mange individer som man har satt `population size` til.
+* Gi hvert individ tilfeldige gener. Genene i vårt tilfelle er et array med (flyt)tall mellom 0 og 1, der antallet elementer bestemmes utifra hvilken figur som utvikles.
+* Når oppgaven er løst skal man ved en refresh av nettleseren se flere individer (fordel på de forskjellige etasjene) som beveger seg i tilfeldige spasmer
 
-### 1
-Når man har en ferdig evolusjonær algoritme, er det egentlig bare to funksjoner som er spesifikke for problemet man trenger å sende inn til algoritmen:
-
-* En funksjon som genererer tilfeldige løsninger. Den har dere allerede fått, den lager tilfeldige tall i et array.
-* En fitness-funksjon som tar inn løsninger og gir dem en score. I vårt tilfelle innebærer det å teste hver løsning i simulatoren.
-Simulatoren returnerer et array, der hvert element består av to verdier: `maxDst` lengste distanse individet kom, `distance` hvor individet var når simuleringen var ferdig.
-Bruk disse verdiene for å gi individene en score. Hvordan du scorer dem er opp til deg. Scorene blir printet i `console` etter hver iterasjon, så sjekk der at det dukker opp noe fornuftig.
+Bevegelsene til individene baseres på genene. Hvert tall i genet tilhører en muskel (kant), og styrer frekvensen/sinusfunksjonen som denne trekker seg sammen i. Gyldig verdi per tall er domenet [0, 1]
 
 
-### 2
+### Oppgave 2
+
+Neste steg er å gi hvert individ en score basert på hvor bra det gjorde det. Output fra simuleringen er en liste med verdier, der hver verdi tilhører et individ.
+Denne verdien er igjen en liste, med posisjonshistorikken per sekund for det individet igjennom simuleringen.
+
+Det er mange måter å beregne fitness på basert på denne historikken. Man kan score individene basert på sluttposisjon, på lengste distanse de noensinne oppnådde,
+på hvor jevnt de beveget seg, trekke dem i score for å ha beveget seg bakover osv. Lønner seg å begynne simpelt, og heller komme tilbake og justere scoringen senere.
+
+* I `fitnessFunction`, sett `fitness`-verdien på hvert individ basert på resultatene fra simuleringen.
+* Når dette er gjort skal man etter en iterasjon (60 simulerte sekunder) se grafen oppdatere seg.
+
+
+### Oppgave 3
 Nå som alle individene har en score kan man velge hvem som skal få parre seg. Om man alltid velger de beste får man en grådig algoritme
-som fort kan bli stuck, så vi ønsker at de dårlige løsningene skal ha en sjanse, men at de gode løsningene skal ha en større sjanse.
+som fort kan bli stuck, så vi ønsker at de dårlige løsningene skal ha en sjanse, men at de gode løsningene skal ha en *større* sjanse.
 
 Det finnes flere algoritmer man kan implementere. Et tips er å implementere dem i hver sin funksjon, og så kan man lett bytte hvilken som 
 brukes ved å sende forskjellig funksjon inn til selve EAen.
 
-Som input får man to arrays, der fitness-verdi nr X tilhører individ nr X. F. eks er `fitnesses[2]` fitnessen til `population[2]`. Funksjonen 
-skal returnere en liste over individer som er plukket ut til å bli foreldre. Samme individ kan forekomme flere ganger. Listen skal inneholde `populationSize` antall individer.
+Som input får man listen over alle individer, med `fitness`-verdien satt. Det man skal returnere er en liste med `populationSize` antall individer.
+Så man velger ut ett og ett individ basert på en av algoritmene under, helt til man har nok. Samme individ kan plukkes ut flere ganger.
 
 * Fitness-proportionate selection.
  1. Normaliser fitness-verdiene til individene (slik at fitness-verdiene for alle individer summerer til 1)
@@ -57,12 +63,23 @@ skal returnere en liste over individer som er plukket ut til å bli foreldre. Sa
 * Tournament selection
  1. Justeres med to verdier: k og p
  2. Trekk ut k tilfeldige individer fra populasjonen
- 3. Med sannsynlighet p, returner individet med best fitness score
- 4. Med sannsynlighet p*(1-p)^(n-1), returner individet med n-te best fitness
+ 3. Med sannsynlighet p, velg individet med best fitness score
+ 4. Med sannsynlighet p*(1-p)^(n-1), velg individet med n-te best fitness
+ 
+* Simple tournament selection
+ 1. Trekk ut k tilfeldige individer fra populasjonen
+ 2. Velg individet med best fitness av disse
+ 3. Denne kan ikke justeres/tweakes i like stor grad
+ 
+* Andre algoritmer
+ 1. Sigma scaling, gir mye variasjon i starten og senere mer målrettet, som kan være nyttig
+ 2. Truncation selection
+ 
+* Implementer en av algoritmene nevnt over inne i `parentSelectionFunction`
+* Når dette er gjort skal man etter noen generasjoner se en trend at man har fått bedre individer. Snittscoren i grafen bør ha økt fra det den var i starten.
 
-Når fitness-funksjonen og en parent-selection er på plass skal man oppleve en svak trend der individene blir bedre for hver generasjon.
 
-### 3
+### Oppgave 4
 Crossover-funksjonen får inn to individer. Man genererer først et tilfeldig tall, og om det tallet er mindre enn crossoverRate skal man gjøre en crossover.
 For å gjøre en crossover velger man en tilfeldig index i individene sitt array, og bytter alle verdiene før eller etter denne indeksen mellom arrayene.
 
