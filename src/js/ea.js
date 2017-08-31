@@ -8,11 +8,11 @@ export function runEa({generatePopulation, fitness, adultSelection, parentSelect
     let population = generatePopulation();
 
     async function iteration() {
-        const fitnesses = await fitness(population);
-        console.log(fitnesses);
-        debugInfo(fitnesses);
+        await fitness(population);
+        //console.log(fitnesses);
+        //debugInfo(fitnesses);
 
-        const parents = parentSelection(population, fitnesses);
+        const parents = parentSelection(population);
 
         const children = [];
 
@@ -30,7 +30,7 @@ export function runEa({generatePopulation, fitness, adultSelection, parentSelect
 
         children.forEach(c => mutate(c));
 
-        population = adultSelection(population, fitnesses, children);
+        population = adultSelection(population, children);
         currentGeneration++;
         setTimeout(iteration, 0);
     }
@@ -39,7 +39,10 @@ export function runEa({generatePopulation, fitness, adultSelection, parentSelect
 }
 
 function copy(individual) {
-    return individual.slice();
+    return {
+        genes: individual.genes.slice(),
+        fitness: 0
+    };
 }
 
 function debugInfo(fitnesses) {

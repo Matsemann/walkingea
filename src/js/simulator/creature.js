@@ -5,11 +5,12 @@ import defs from './creatureDefinitions.js';
 
 export default class Creature {
 
-    constructor(d, movements, world, color, offset) {
+    constructor(d, movements, world, color, offset, name) {
         const definition = defs[d];
 
         this.color = color;
         this.offset = offset;
+        this.name = name;
         this.bodies = [];
         this.joints = [];
         this.jointLengths = [];
@@ -123,7 +124,13 @@ export default class Creature {
             ctx.moveTo(a.x, a.y + this.offset);
             ctx.lineTo(b.x, b.y + this.offset);
             ctx.stroke();
-        })
+        });
+
+        if (this.name) {
+            let pos = this.bodies[0].getPosition();
+            ctx.renderText(this.name, 14, pos.x + .2, pos.y + this.offset);
+        }
+
     }
 
 

@@ -18,9 +18,20 @@ let promiseResolve = null;
 const canvas = document.getElementById('mainCanvas');
 const ctx = canvas.getContext('2d');
 
-export function simulate(creatureType, phenotypes) {
+ctx.renderText = function(text, size, x, y) {
+    this.save();
+    this.font = size + 'px sans-serif';
+    this.transform(1 / this.camera.zoom, 0, 0, -1 / this.camera.zoom, x, y);
+    this.fillText(text, 0, 0);
+    this.restore();
+};
+
+/**
+ * @returns {Promise.<number[][]>}
+ */
+export function simulate(creatureType, population) {
     finished = false;
-    simulation = new Simulation(creatureType, phenotypes);
+    simulation = new Simulation(creatureType, population);
 
 
     startSimulation();
@@ -90,14 +101,15 @@ class Simulation {
             pos: Vec2(5, 5.5),
             zoom: 45,
         };
+        ctx.camera = this.camera;
 
         this.world = new World(Vec2(0, -10));
         this.createGround();
 
 
-        this.creatures = phenotypes.map((p, i) => {
+        this.creatures = phenotypes.map((individual, i) => {
             const offsett = (i % nrGrounds) * groundsDistance;
-            return new Creature(creatureType, p, this.world, getRandomColor(), offsett);
+            return new Creature(creatureType, individual.genes, this.world, getRandomColor(), offsett, individual.name);
         });
         this.timePassed = 0;
 

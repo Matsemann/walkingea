@@ -2,6 +2,12 @@ import creatureDefinitions from './simulator/creatureDefinitions.js';
 import {simulate} from './simulator/walkSimulator.js';
 import {runEa} from './ea.js';
 
+/**
+ * @typedef {Object} Individual
+ * @property {number[]} genes
+ * @property {number} fitness
+ */
+
 export default function evolveWalkers(options) {
     const mutationRate = options.mutationRate;
     const creatureType = options.creatureType;
@@ -10,38 +16,64 @@ export default function evolveWalkers(options) {
 
     const numberOfGenes = creatureDefinitions[creatureType].edges.length;
 
+    /**
+     * @returns {Individual[]}
+     */
     function generatePopulationFunction() {
+        /**
+         * @type {Individual[]}
+         */
         const population = [];
         for (let i = 0; i < populationSize; i++) {
             const genes = [];
             for (let j = 0; j < numberOfGenes; j++) {
                 genes.push(Math.random());
             }
-            population.push(genes);
+            population.push({
+                genes: genes,
+                fitness: 0
+            });
         }
         return population;
     }
 
-    async function fitnessFunction(phenotypes) {
-        const results = await simulate(creatureType, phenotypes);
+    /**
+     * @param population {Individual[]}
+     */
+    async function fitnessFunction(population) {
+        const results = await simulate(creatureType, population);
 
-        return results.map(r => {
-            // har r.maxDst og r.distance
-            return 0;
-        });
+        // results[i] belongs to population[i]
     }
 
-    function adultSelectionFunction(oldPopulation, oldFitnesses, children) {
-        return children;
-    }
-
-    function parentSelectionFunction(population, fitnesses) {
+    /**
+     * @param population {Individual[]}
+     * @returns {Individual[]}
+     */
+    function parentSelectionFunction(population) {
         return population;
     }
 
+    /**
+     * @param oldPopulation {Individual[]}
+     * @param children {Individual[]}
+     * @returns {Individual[]}
+     */
+    function adultSelectionFunction(oldPopulation, children) {
+        return children;
+    }
+
+    /**
+     * @param individual {Individual}
+     */
     function mutateFunction(individual) {
     }
 
+    /**
+     *
+     * @param parent1 {Individual}
+     * @param parent2 {Individual}
+     */
     function crossoverFunction(parent1, parent2) {
     }
 
