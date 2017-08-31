@@ -1,16 +1,20 @@
-let currentGeneration = 1;
+import Chart from 'chart.js';
+
+let currentGeneration;
+let chart;
 
 
 export function runEa({generatePopulation, fitness, adultSelection, parentSelection, crossover, mutate}) {
 
-    currentGeneration = 1;
-    debugInfo([0]);
+    makeChart();
+    currentGeneration = 0;
+    debugInfo([{fitness: 0}]);
+    currentGeneration++;
     let population = generatePopulation();
 
     async function iteration() {
         await fitness(population);
-        //console.log(fitnesses);
-        //debugInfo(fitnesses);
+        debugInfo(population);
 
         const parents = parentSelection(population);
 
@@ -45,15 +49,87 @@ function copy(individual) {
     };
 }
 
-function debugInfo(fitnesses) {
+function debugInfo(population) {
+    let sum = 0;
     let max = -99999;
-    fitnesses.forEach(f => {
-        if (f > max) {
-            max = f;
+
+    population
+        .map(i => i.fitness)
+        .forEach(f => {
+            sum += f;
+            if (f > max) {
+                max = f;
+            }
+        });
+
+    let avg = sum / population.length;
+
+
+    document.getElementById("debugInfo").innerHTML = `<b>Generation: <b/>${currentGeneration}, <b>best fitness:</b>
+        ${max.toFixed((2))}, <b>average:</b> ${avg.toFixed((2))}`;
+
+    chart.data.datasets[0].data.push(max);
+    chart.data.datasets[1].data.push(avg);
+    chart.data.labels.push(currentGeneration);
+    chart.update();
+}
+
+var ctx = document.getElementById("graph");
+
+function makeChart() {
+    chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [
+                {
+                    label: 'Max',
+                    backgroundColor: '#7bff49',
+                    borderColor: '#7bff49',
+                    fill: false,
+                    borderWidth: 2,
+                    //data: [{x: 1, y:5}, {x: 2, y:5}, {x: 3, y:5}]
+                    data: []
+                }, {
+                    label: 'Avg',
+                    backgroundColor: '#6489ff',
+                    borderColor: '#6489ff',
+                    borderWidth: 2,
+                    fill: false,
+                    //data: [{x: 1, y:4}, {x: 1, y:3}, {x: 1, y:2}]
+                    data: []
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            legend: {
+                display: true,
+                position: 'bottom'
+            },
+            scales: {
+                xAxes: [
+                    {
+                        display: true,
+                        ticks: {
+                            suggestedMin: 50,
+                            suggestedMax: 100
+                        }
+                    }
+                ],
+                yAxes: [
+                    {
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Value'
+                        }
+                    }
+                ]
+            }
+
         }
     });
 
-
-    document.getElementById("debugInfo").innerHTML = `<b>Generation: <b/>${currentGeneration}, <b>Best fitness: </b>${max.toFixed(
-        (2))}`;
 }
+
