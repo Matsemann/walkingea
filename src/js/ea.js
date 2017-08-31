@@ -6,10 +6,11 @@ let chart;
 
 export function runEa({generatePopulation, fitness, adultSelection, parentSelection, crossover, mutate}) {
 
-    makeChart();
     currentGeneration = 0;
-    debugInfo([{fitness: 0}]);
+    makeChart();
+    debugInfo([{fitness: 0, genes: []}]);
     currentGeneration++;
+
     let population = generatePopulation();
 
     async function iteration() {
@@ -52,13 +53,15 @@ function copy(individual) {
 function debugInfo(population) {
     let sum = 0;
     let max = -99999;
+    let best = null;
 
     population
-        .map(i => i.fitness)
-        .forEach(f => {
+        .forEach(i => {
+            const f = i.fitness;
             sum += f;
             if (f > max) {
                 max = f;
+                best = i;
             }
         });
 
@@ -66,7 +69,8 @@ function debugInfo(population) {
 
 
     document.getElementById("debugInfo").innerHTML = `<b>Generation: <b/>${currentGeneration}, <b>best fitness:</b>
-        ${max.toFixed((2))}, <b>average:</b> ${avg.toFixed((2))}`;
+        ${max.toFixed((2))}, <b>average:</b> ${avg.toFixed((2))}<br>
+        Best: <input value="[${best.genes}]">`;
 
     chart.data.datasets[0].data.push(max);
     chart.data.datasets[1].data.push(avg);
