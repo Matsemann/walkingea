@@ -74,12 +74,7 @@ function startRendering() {
 function finishSimulation() {
     endSimulation();
 
-    const result = simulation.creatures.map(c => {
-        return {
-            maxDst: c.maxDst,
-            distance: c.findDst()
-        }
-    });
+    const result = simulation.creatures.map(c => c.distances);
 
     promiseResolve(result);
 }

@@ -17,6 +17,7 @@ export default class Creature {
         this.movements = movements;
 
         this.maxDst = -200;
+        this.distances = [];
 
 
         const shape = Circle(.1);
@@ -66,7 +67,9 @@ export default class Creature {
     }
 
     update(time) {
-        this.findMaxDst();
+        let dst = this.findDst();
+        this.setMaxDst(dst);
+        this.logDst(dst, time);
 
         for (let i = 0; i < this.joints.length; i++) {
             const j = this.joints[i];
@@ -80,10 +83,15 @@ export default class Creature {
 
     }
 
-    findMaxDst() {
-        var dst = this.findDst();
+    setMaxDst(dst) {
         if (dst > this.maxDst) {
             this.maxDst = dst;
+        }
+    }
+
+    logDst(dst, time) {
+        if (time - this.distances.length > 0) {
+            this.distances.push(dst);
         }
     }
 
