@@ -74,43 +74,59 @@ Så man velger ut ett og ett individ basert på en av algoritmene under, helt ti
 * Andre algoritmer
  1. Sigma scaling, gir mye variasjon i starten og senere mer målrettet, som kan være nyttig
  2. Truncation selection
+ 3. Rank selection
  
 * Implementer en av algoritmene nevnt over inne i `parentSelectionFunction`
 * Når dette er gjort skal man etter noen generasjoner se en trend at man har fått bedre individer. Snittscoren i grafen bør ha økt fra det den var i starten.
 
 
 ### Oppgave 4
-Crossover-funksjonen får inn to individer. Man genererer først et tilfeldig tall, og om det tallet er mindre enn crossoverRate skal man gjøre en crossover.
-For å gjøre en crossover velger man en tilfeldig index i individene sitt array, og bytter alle verdiene før eller etter denne indeksen mellom arrayene.
 
-### 4
+Crossover er der selve "paringen" skjer. Funksjonen får inn to individer, og har mulighet til å mikse deres DNA.
+
+* Gjøres i funksjonen `crossoverFunction`.
+* Først må man finne ut om de skal mikses eller ikke. Gjøres ved å generere et tilfeldig tall (mellom 0 og 1) og sjekke om det er mindre enn `crossoverRate` som har blitt valgt.
+* Om tilfeldighetene sier at en crossover skal gjøres, gjøres det ved å velge en tilfeldig index i individene sitt gen, og bytte/swappe alle verdiene i genet etter denne indeksen.
+
+
+### Oppgave 5
+
+Mutasjonen er der man har mulighet til å innføre nye "egenskaper" i populasjonen. Det gjøres ved å gjøre justeringer på genet til individene.
+
+I hovedsak to måter å gjøre mutasjon på: per verdi, eller på genet som helhet
+* Førstnevnte itererer man over hver verdi i genet, og for hver verdi trekker man et tilfeldig tall og sammenligner med `mutationRate`. Om det skal muteres, muterer man den verdien.
+* Nummer 2, som er den mest vanlige, er at man finner ut om man skal mutere eller ikke. Skal man mutere, gjøres det ved å velge en tilfeldig verdi i genet og mutere denne.
+
+Forskjellen på disse to er at den første har mulighet til å endre flere verdier i samme mutasjon, og kan dermed raskere utvikle spennende egenskaper.
+Samtidig står man også i fare for at for store endringer ødelegger individet man muterer, så en tradeoff der. Bruker man den først er `mutationRate` per verdi,
+i genet og bør derfor være lav. Bruker man nummer 2 er `mutationRate` per individ, og kan da være en del høyere.
+
+Når en muterer verdien er det igjen flere måter å gjøre det på (når genet er flyttall):
+* Bare bytte ut verdien med en ny, tilfeldig verdi mellom 0 og 1. Kan bli en større endring, på godt og vondt.
+* Trekke fra/legge til en litt mindre, tilfeldig verdi.
+* Legge til en tilfeldig, normalfordelt verdi rundt 0. Ofte denne som brukes i praksis da endringen i snitt er liten, men med en liten sannsynlighet for større endringer. `Rnd2` her gir et godt eksempel på hvordan lage et normalfordelt tall: http://jsfiddle.net/Guffa/tvt5K/
+
 Mutasjon får inn ett individ. Det er to måter å bruke mutationRate på:
 * Om et tilfeldig tall er under mutationRate, muterer vi en tilfeldig verdi i arrayet til individet. Da har man typisk en høy mutation rate.
 * For hver verdi i arrayet til individet trekker vi et tilfeldig tall og sjekker om det er under mutationRate, i så fall muterer vi den posisjonen i arrayet. Her kan man altså kanskje få flere mutasjoner på samme individ. Har typisk en veldig lav mutation rate, da den nå gjelder per verdi.
 
-Og igjen er det flere måter å mutere på:
-* Bytt ut verdien med en ny tilfeldig verdi mellom 0 og 1. Dette kan bli en veldig stor endring.
-* Generer et tilfeldig, lite tall og legg til eller trekk det fra den eksisterende verdien. Gir typisk en veldig liten endring.
-* Generer et tilfeldig, normalfordelt tall rundt 0 og legg det til den eksisterende verdien. Gir som regel en liten endring, men med mulighet for større mutasjoner en gang i blant.
-`Rnd2` her gir et godt eksempel på hvordan lage et normalfordelt tall: http://jsfiddle.net/Guffa/tvt5K/
+Husk at verdiene i genet bare er mellom 0 og 1, så etter en verdi er mutert må man passe på at det fortsatt gjelder.
 
-Pass på at den muterte verdien fortsatt er mellom 0 og 1 etter mutasjonen.
-
-### 5
+### Oppgave 6
 For adult-selection kjører vi foreløbig en "full generational replacement", altså at alle foreldre dør og blir erstattet av barna.
 Men det kan være lurt å la et par av de beste foreldrene få overleve. Dette sikrer at det beste individet i en generasjon ikke er dårligere enn det var i forrige generasjon,
 og at man ikke mister de beste genkombinasjonene man har produsert så langt. Dette kalles for "elitisme".
 
-Så i tillegg til å returnere barna som det gjøres nå, finn et par av de beste foreldrene basert på `oldFitnesses` og legg de til (`concat`) på listen før den returneres.
-
+* I `adultSelectionFunction`, plukk ut noen få av de beste fra `oldPopulation` og returner de sammen med barna (`concat` funksjonen i javascript).
+* Når dette er gjort bør max fitness per generasjon aldri synke, da noen av de beste alltid blir med videre.
 
 ### Tweaking
 
 Å skrive koden er bare 10% av det å lage en evolusjonær algoritme, da det er masse tweaking for å få den god. Her er noe av det som kan justeres:
 
-* `Mutation rate` kan være lurt å ha litt høy, da det er den som innfører nye egenskaper til populasjonen.
+* `Mutation rate` kan være lurt å ha litt høy, da det er den som innfører nye egenskaper til populasjonen. Samtidig kan for høy mutasjon komme i veien og ødelegge for gode individer.
 
-* `Crossover rate` er også viktig, men ikke alle kombinasjoner av foreldre gir fornuftige avkom, så den bør ofte ikke være alt for høy.
+* `Crossover rate` er også viktig en viktig faktor. Ikke gitt at det å kombinere to foreldre gir gode avkom. Får man etter hvert mange like individer kan det være at crossover- og mutation rate er for lave.
 
 * `Population`, en større populasjon gir større mangfold som kan gi bedre løsninger. Men det gjør også algoritmen tregere.
 
@@ -119,23 +135,26 @@ Så i tillegg til å returnere barna som det gjøres nå, finn et par av de best
 * `Mutasjon`, nevnt flere måter å gjøre mutasjon på som kan testes
 
 * `Parent-selection`, flere forskjellige måter å gjøre det på. I tillegg har f. eks. Tournament Selection to parametre som kan justeres,
-som avgjør sannsynligheten for å velge den beste løsningen eller om en dårligere en skal bli valgt for å bevare mangfoldet.
+som avgjør sannsynligheten for å velge den beste løsningen eller om en dårligere en skal bli valgt for å bevare mangfoldet. Refereres ofte til
+"selection pressure". For høy pressure gjør at bare gode individer velges, for lav at for mange dårlige blir med videre, så trikset er å 
+tweake denne masse. Et tegn på for lav selection pressure kan være at average-fitness ikke øker særlig på sikt.
 
-* `Fitness-funksjonen`, her er det ofte mye tweaking. I vårt tilfelle nå har vi bare to verdier å forholde oss til.
-
-* `Figure`, forskjellige figurer som man kan prøve å lære og gå. 
+* `Fitness-funksjonen`, her er det ofte mye tweaking for å belønne egenskaper som kan lønne seg på sikt.
 
 
 ### Bonus
 
-* Finn andre former for parent selection og implementer disse.
+* Prøv å lære noen av de andre figurene å gå.
 
 * Legg til en ny figur ved å utvide `creatureDefinitions.js`. `Points` er koordinater til punktene, mens `edges` er indekser til punkter som skal kobles sammen. 
 Navnet du gir figuren må også legges til i dropdownen i `index.html`
 
-* Prøv å evolve en figur der målet er å hoppe høyest mulig. Må da endre på `creature.js` til at den finner max distanse i y-retning og ikke x.
-Må nok også tweake verdiene i `jointDef` i samme fil for å gjøre musklene mer "spretne". Kan øke hz og minske damping.
+* Implementer en ny form for parent selection.
 
-* Bruk EAen til å løse et annet problem. F. eks. "onemax" som går ut på å få et array til å bare inneholde 1-ere. 
-Da må man kalle runEA med en ny funksjon for å generere random individer, og nok bytte ut flyttall-mutasjonen med en som flipper bits, og sende inn en
-fitness funksjon som gir score basert på antall 1-ere.
+* Lek deg med simulatoren. F. eks. justere på verdiene i `jointDef` i `creature.js`.
+
+* Jeg har lagt ved en pdf som heter `oving2.pdf`. I denne finner man 3 problemer: One-Max, LOLZ og Surprising Sequences.
+EAen er så generell at den kan gjenbrukes til å løse alle mulige problemer, så prøv å løse noen av disse ved å kalle `runEA` med funksjoner relatert til disse problemene.
+Parent selection, crossover og slik kan nok gjenbrukes, men mutation må nok byttes ut med en som ikke er beregnet på flyttall, fitness funksjonen må omskrives spesifikt per problem, og funksjonen
+som genererer populasjonen må også byttes ut til problemet.
+
